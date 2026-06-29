@@ -1,11 +1,240 @@
-<html>
-  <head>
-    <title>Mail Page</title>
-  </head>
-  <body>
-    <div></div>
-    <h2>파워맨임다!...</h2>
-    <br/>
-    <h6>열공중</h6>
-  </body>
-</html>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>나의 자기소개 페이지</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #5c7cfa;
+            --primary-hover: #4263eb;
+            --success-color: #2bc9bc;
+            --success-hover: #0ca678;
+            --cancel-color: #adb5bd;
+            --cancel-hover: #868e96;
+            --bg-color: #f8f9fa;
+            --card-color: #ffffff;
+            --text-color: #212529;
+            --text-muted: #868e96;
+            --box-bg: #f1f3f5;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #e6e9f0 0%, #eef1f5 100%);
+            color: var(--text-color);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+            background: var(--card-color);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--text-color);
+            font-weight: 700;
+            font-size: 2rem;
+            margin-top: 0;
+            margin-bottom: 35px;
+            letter-spacing: -0.5px;
+        }
+
+        /* 프로필 사진 섹션 */
+        .profile-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .image-container {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid #fff;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #dee2e6;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .image-container:hover {
+            transform: scale(1.02);
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-container span {
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .file-input-btn {
+            margin-top: 15px;
+            padding: 8px 18px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: 0 4px 10px rgba(92, 124, 250, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .file-input-btn:hover {
+            background-color: var(--primary-hover);
+            box-shadow: 0 4px 12px rgba(92, 124, 250, 0.3);
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        /* 콘텐츠 섹션 */
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 12px;
+            display: inline-flex;
+            align-items: center;
+            background: #edf2ff;
+            padding: 4px 12px;
+            border-radius: 6px;
+        }
+
+        .content-box {
+            min-height: 60px;
+            padding: 16px;
+            background: var(--box-bg);
+            border-radius: 12px;
+            white-space: pre-wrap;
+            line-height: 1.6;
+            font-size: 0.95rem;
+            color: #495057;
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        /* 편집 모드 스타일 */
+        .editable {
+            border: 1px solid var(--primary-color);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(92, 124, 250, 0.12);
+            outline: none;
+            color: var(--text-color);
+        }
+
+        /* 버튼 제어 */
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 40px;
+        }
+
+        button {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .edit-btn { 
+            background-color: var(--primary-color); 
+            color: white; 
+            box-shadow: 0 4px 12px rgba(92, 124, 250, 0.2);
+        }
+        .edit-btn:hover { background-color: var(--primary-hover); }
+
+        .save-btn { 
+            background-color: var(--success-color); 
+            color: white; 
+            display: none; 
+            box-shadow: 0 4px 12px rgba(43, 201, 188, 0.2);
+        }
+        .save-btn:hover { background-color: var(--success-hover); }
+
+        .cancel-btn { 
+            background-color: var(--cancel-color); 
+            color: white; 
+            display: none; 
+        }
+        .cancel-btn:hover { background-color: var(--cancel-hover); }
+
+        button:hover {
+            transform: translateY(-1px);
+        }
+        button:active {
+            transform: translateY(1px);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>✨ About Me</h1>
+
+    <div class="profile-section">
+        <div class="image-container" id="image-container">
+            <span id="placeholder-text">사진 없음</span>
+            <img id="profile-img" src="" alt="프로필 사진" style="display: none;">
+        </div>
+        <label class="file-input-btn" id="upload-label" style="display: none;">
+            사진 변경
+            <input type="file" id="file-input" accept="image/*">
+        </label>
+    </div>
+
+    <div class="section">
+        <div class="section-title">💼 나의 사회이력</div>
+        <div id="history" class="content-box">여기에 나의 사회이력을 입력해보세요. (ex. OO회사 근무, 프로젝트 수행 등)</div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">🔍 나의 관심사</div>
+        <div id="interests" class="content-box">현재 관심을 갖고 있는 기술, 취미, 분야를 적어보세요.</div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">🏃‍♂️ 지금 나는</div>
+        <div id="current" class="content-box">요즘 집중하고 있는 일이나 현재의 상태를 공유해보세요.</div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">🚀 앞으로 나는</div>
+        <div id="future" class="content-box">앞으로의 목표, 배우고 싶은 것, 비전을 적어보세요.</div>
+    </div>
+
+    <div class="btn-container">
+        <button class="edit-btn" id="edit-btn" onclick="enable
