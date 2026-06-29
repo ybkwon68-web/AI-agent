@@ -1,66 +1,205 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>AI 가위바위보 GAME</title>
+    <style>
+        /* 기본 스타일 리셋 및 배경 설정 */
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            background-color: #121214;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        /* 메인 타이틀 */
+        .title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: linear-gradient(45deg, #ff4e50, #f9d423);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 25px;
+            text-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* [추가] 가위바위보 포즈 규칙 가이드 */
+        .guide-container {
+            background: #1e1e22;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 15px 25px;
+            margin-bottom: 25px;
+            max-width: 500px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        .guide-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #f9d423;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .guide-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .guide-list li {
+            margin: 8px 0;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+        }
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            margin-right: 10px;
+            min-width: 45px;
+            text-align: center;
+        }
+        .badge-scissors { background-color: #ff4e50; color: white; }
+        .badge-rock { background-color: #4ea8de; color: white; }
+        .badge-paper { background-color: #4cf1a6; color: #121214; }
+
+        /* 게임 시작 버튼 */
+        .start-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            margin-bottom: 25px;
+        }
+        .start-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        .start-btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* 미디어 레이아웃 (웹캠 + 결과 창) */
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        /* 웹캠 박스 */
+        #webcam-container {
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            border: 3px solid #333;
+            background-color: #000;
+            width: 200px;
+            height: 200px;
+        }
+
+        /* 결과 라벨 콘테이너 */
+        #label-container {
+            width: 100%;
+            background: #1e1e22;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            box-sizing: border-box;
+        }
+
+        /* 각각의 가위/바위/보 확률 바 스타일 */
+        #label-container div {
+            font-size: 1.1rem;
+            padding: 8px 12px;
+            margin: 6px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            border-left: 4px solid #764ba2;
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
 </head>
 <body>
-    <div>가위바위보 GAME</div>
-<button type="button" onclick="init()">게임시작하기</button>
-<div id="webcam-container"></div>
-<div id="label-container"></div>
+
+    <div class="title">가위바위보 GAME</div>
+
+    <div class="guide-container">
+        <div class="guide-title">💡 게임 모션 규칙 안내</div>
+        <ul class="guide-list">
+            <li><span class="badge badge-scissors">가위</span> 양 팔을 앞으로 <strong>'X'자</strong>로 교차하세요.</li>
+            <li><span class="badge badge-rock">바위</span> 두 팔을 머리 위로 올려 <strong>둥글게</strong> 만드세요.</li>
+            <li><span class="badge badge-paper">보</span> 양 팔을 옆으로 <strong>활짝</strong> 벌려주세요.</li>
+        </ul>
+    </div>
+
+    <button class="start-btn" type="button" onclick="init()">게임 시작하기</button>
+
+    <div class="game-container">
+        <div id="webcam-container"></div>
+        <div id="label-container"></div>
+    </div>
+
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
 <script type="text/javascript">
-    // More API functions here:
-    // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/image
-
-    // the link to your model provided by Teachable Machine export panel
     const URL = "https://teachablemachine.withgoogle.com/models/PGHhB37lx/";
 
     let model, webcam, labelContainer, maxPredictions;
 
-    // Load the image model and setup the webcam
     async function init() {
         const modelURL = URL + "model.json";
         const metadataURL = URL + "metadata.json";
 
-        // load the model and metadata
-        // Refer to tmImage.loadFromFiles() in the API to support files from a file picker
-        // or files from your local hard drive
-        // Note: the pose library adds "tmImage" object to your window (window.tmImage)
         model = await tmImage.load(modelURL, metadataURL);
         maxPredictions = model.getTotalClasses();
 
-        // Convenience function to setup a webcam
-        const flip = true; // whether to flip the webcam
-        webcam = new tmImage.Webcam(200, 200, flip); // width, height, flip
-        await webcam.setup(); // request access to the webcam
+        const flip = true; 
+        webcam = new tmImage.Webcam(200, 200, flip); 
+        await webcam.setup(); 
         await webcam.play();
         window.requestAnimationFrame(loop);
 
-        // append elements to the DOM
         document.getElementById("webcam-container").appendChild(webcam.canvas);
         labelContainer = document.getElementById("label-container");
-        for (let i = 0; i < maxPredictions; i++) { // and class labels
+        labelContainer.innerHTML = ""; // 기존 내용 초기화
+        for (let i = 0; i < maxPredictions; i++) { 
             labelContainer.appendChild(document.createElement("div"));
         }
     }
 
     async function loop() {
-        webcam.update(); // update the webcam frame
+        webcam.update(); 
         await predict();
         window.requestAnimationFrame(loop);
     }
 
-    // run the webcam image through the image model
     async function predict() {
-        // predict can take in an image, video or canvas html element
         const prediction = await model.predict(webcam.canvas);
         for (let i = 0; i < maxPredictions; i++) {
-            const classPrediction =
-                prediction[i].className + ": " + prediction[i].probability.toFixed(2);
+            // 확률을 퍼센트(%) 형태로 변환하여 시각적으로 더 이해하기 쉽게 수정
+            const percent = (prediction[i].probability * 100).toFixed(0);
+            const classPrediction = `<span>${prediction[i].className}</span> <strong>${percent}%</strong>`;
             labelContainer.childNodes[i].innerHTML = classPrediction;
         }
     }
